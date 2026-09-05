@@ -42,3 +42,13 @@ uvicorn app.main:app --host 0.0.0.0 --port 8080
 ## Env
 
 See `.env.example`. Never commit real secrets.
+
+## Deploy (Railway)
+
+Repo root has `railway.toml` pointing at this Dockerfile. Railway must set:
+
+- `PORT` (automatic)
+- `SANDBOX_SECRET` (required in production — strong random value)
+
+Custom domain example: `botbox.rcs.lat` → service Networking → Custom domain.
+

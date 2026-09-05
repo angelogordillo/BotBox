@@ -1,0 +1,8 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "tools/sandbox/Dockerfile"
+
+[deploy]
+healthcheckPath = "/v0/health"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
