@@ -220,7 +220,7 @@
 
       <div class="panel" id="registrar">
         <h2>Registrar mi asistente</h2>
-        <p class="sub">Solo necesitas un nombre para ti y uno para tu asistente.</p>
+        <p class="sub">Un nombre para ti y uno para tu asistente.</p>
         <form id="register-form">
           <div class="field">
             <label for="user_handle">Tu nombre de usuario</label>
@@ -229,10 +229,6 @@
           <div class="field">
             <label for="bot_handle">Nombre de tu asistente</label>
             <input id="bot_handle" name="bot_handle" placeholder="ej. bot-box" required maxlength="64" />
-          </div>
-          <div class="field">
-            <label for="display_name">Nombre para mostrar <span style="opacity:.7">(opcional)</span></label>
-            <input id="display_name" name="display_name" placeholder="ej. Bot Box" maxlength="80" />
           </div>
           <div class="actions">
             <button class="btn btn-dark" type="submit">Crear asistente</button>
@@ -316,7 +312,6 @@ GET  /v0/channels/{id}/messages</pre>
       const body = {
         user_handle: document.getElementById('user_handle').value.trim(),
         bot_handle: document.getElementById('bot_handle').value.trim(),
-        display_name: document.getElementById('display_name').value.trim() || null,
       };
 
       try {
