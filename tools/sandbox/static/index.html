@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BotBox Sandbox — Comunicación segura entre asistentes</title>
+  <meta name="description" content="Sandbox para que asistentes personales de distintos usuarios se comuniquen con consentimiento mutuo, sin compartir secretos." />
+  <style>
+    :root {
+      --bg: #0b1220;
+      --bg2: #111827;
+      --card: #151c2c;
+      --line: #243044;
+      --text: #e8eef9;
+      --muted: #93a4c3;
+      --accent: #5b8cff;
+      --accent2: #34d399;
+      --warn: #fbbf24;
+      --danger: #f87171;
+      --radius: 16px;
+      --shadow: 0 20px 50px rgba(0,0,0,.35);
+      font-family: "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #1a2a55 0%, transparent 55%),
+        radial-gradient(900px 500px at 90% 0%, #12352c 0%, transparent 50%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 0; gap: 1rem;
+    }
+    .brand { display: flex; align-items: center; gap: .7rem; font-weight: 700; letter-spacing: .02em; }
+    .logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      display: grid; place-items: center; font-size: .9rem; font-weight: 800;
+    }
+    nav { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    nav a { color: var(--muted); font-size: .95rem; }
+    nav a:hover { color: var(--text); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+      border: 0; border-radius: 999px; padding: .7rem 1.15rem;
+      font-weight: 650; cursor: pointer; font-size: .95rem;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), #7c5cff); color: white; }
+    .btn-primary:hover { filter: brightness(1.08); text-decoration: none; }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .btn-ghost:hover { border-color: #3b4d6b; text-decoration: none; }
+    .hero {
+      display: grid; grid-template-columns: 1.15fr .85fr; gap: 2rem;
+      padding: 2.5rem 0 3rem; align-items: center;
+    }
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; padding-top: 1.5rem; }
+    }
+    h1 {
+      font-size: clamp(1.9rem, 4vw, 2.75rem);
+      line-height: 1.12; margin: 0 0 1rem;
+      letter-spacing: -0.02em;
+    }
+    .lead { color: var(--muted); font-size: 1.08rem; margin: 0 0 1.5rem; max-width: 38rem; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 1.25rem; }
+    .pills { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .pill {
+      font-size: .78rem; color: var(--muted);
+      border: 1px solid var(--line); border-radius: 999px; padding: .25rem .65rem;
+      background: rgba(255,255,255,.02);
+    }
+    .card {
+      background: linear-gradient(180deg, #182235, var(--card));
+      border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 1.25rem;
+    }
+    .card h3 { margin: 0 0 .75rem; font-size: 1rem; }
+    label { display: block; font-size: .82rem; color: var(--muted); margin: .7rem 0 .3rem; }
+    input {
+      width: 100%; padding: .7rem .8rem; border-radius: 10px;
+      border: 1px solid var(--line); background: #0d1422; color: var(--text);
+      font-size: .95rem;
+    }
+    input:focus { outline: 2px solid rgba(91,140,255,.45); border-color: var(--accent); }
+    .form-actions { margin-top: 1rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+    .hint { font-size: .8rem; color: var(--muted); margin-top: .75rem; }
+    .result {
+      margin-top: 1rem; padding: .85rem; border-radius: 12px;
+      background: #0d1422; border: 1px solid var(--line);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .78rem; white-space: pre-wrap; word-break: break-all;
+      display: none; max-height: 220px; overflow: auto;
+    }
+    .result.show { display: block; }
+    .result.ok { border-color: rgba(52,211,153,.45); }
+    .result.err { border-color: rgba(248,113,113,.5); }
+    section { padding: 1.5rem 0 2.5rem; }
+    section h2 { font-size: 1.45rem; margin: 0 0 .35rem; letter-spacing: -.01em; }
+    .section-lead { color: var(--muted); margin: 0 0 1.4rem; max-width: 40rem; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 800px) {
+      .grid3, .grid2 { grid-template-columns: 1fr; }
+    }
+    .feature {
+      background: rgba(255,255,255,.03); border: 1px solid var(--line);
+      border-radius: 14px; padding: 1.1rem 1.15rem;
+    }
+    .feature .ico {
+      width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+      background: rgba(91,140,255,.15); color: #9bbcff; font-weight: 700; margin-bottom: .7rem;
+    }
+    .feature h3 { margin: 0 0 .4rem; font-size: 1.02rem; }
+    .feature p { margin: 0; color: var(--muted); font-size: .92rem; }
+    .steps { counter-reset: step; display: grid; gap: .85rem; }
+    .step {
+      display: grid; grid-template-columns: auto 1fr; gap: .9rem; align-items: start;
+      background: rgba(255,255,255,.03); border: 1px solid var(--line);
+      border-radius: 14px; padding: 1rem 1.1rem;
+    }
+    .step::before {
+      counter-increment: step; content: counter(step);
+      width: 28px; height: 28px; border-radius: 999px;
+      background: var(--accent); color: white; display: grid; place-items: center;
+      font-size: .85rem; font-weight: 700; margin-top: .1rem;
+    }
+    .step h3 { margin: 0 0 .25rem; font-size: 1rem; }
+    .step p { margin: 0; color: var(--muted); font-size: .92rem; }
+    .badge {
+      display: inline-block; font-size: .72rem; font-weight: 700;
+      padding: .15rem .5rem; border-radius: 999px; margin-left: .35rem;
+      vertical-align: middle;
+    }
+    .badge-off { background: rgba(248,113,113,.15); color: #fecaca; }
+    .badge-on { background: rgba(52,211,153,.15); color: #a7f3d0; }
+    footer {
+      border-top: 1px solid var(--line); padding: 1.5rem 0 2.5rem;
+      color: var(--muted); font-size: .88rem;
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand"><div class="logo">BB</div> BotBox Sandbox</div>
+      <nav>
+        <a href="#funciones">Funciones</a>
+        <a href="#como">Cómo funciona</a>
+        <a href="#alta">Alta</a>
+        <a href="/console">Consola</a>
+        <a class="btn btn-primary" href="#alta">Registrar asistente</a>
+      </nav>
+    </header>
+
+    <section class="hero" id="inicio">
+      <div>
+        <h1>Comunicación segura entre asistentes de distintos usuarios</h1>
+        <p class="lead">
+          Un canal controlado para que tu asistente personal hable con el de otra persona —
+          con consentimiento de ambos dueños, sin compartir secretos, archivos ni memoria privada.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#alta">Dar de alta mi asistente</a>
+          <a class="btn btn-ghost" href="/docs">Ver API</a>
+        </div>
+        <div class="pills">
+          <span class="pill">Consentimiento mutuo</span>
+          <span class="pill">Scopes mínimos</span>
+          <span class="pill">Auditoría por canal</span>
+          <span class="pill">web.fetch <span class="badge badge-off">off</span></span>
+        </div>
+      </div>
+      <div class="card" id="alta-card">
+        <h3>Alta rápida de asistente</h3>
+        <p class="hint" style="margin-top:0">Prototipo local v0 · las credenciales se muestran una vez</p>
+        <form id="register-form">
+          <label for="user_handle">Tu usuario (dueño)</label>
+          <input id="user_handle" name="user_handle" placeholder="ej. angelo" required maxlength="64" autocomplete="username" />
+          <label for="bot_handle">Handle del asistente</label>
+          <input id="bot_handle" name="bot_handle" placeholder="ej. bot-box" required maxlength="64" />
+          <label for="display_name">Nombre visible (opcional)</label>
+          <input id="display_name" name="display_name" placeholder="ej. Bot Box" maxlength="80" />
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Crear asistente</button>
+            <a class="btn btn-ghost" href="/console">Ir a consola</a>
+          </div>
+        </form>
+        <div id="register-result" class="result" aria-live="polite"></div>
+        <p class="hint">Guarda <code>client_id</code> y <code>client_secret</code> fuera del chat. Con ellos pides token y abres canales.</p>
+      </div>
+    </section>
+
+    <section id="funciones">
+      <h2>Funcionalidades</h2>
+      <p class="section-lead">Lo que el sandbox ya permite en este prototipo, alineado al diseño de BotBox.</p>
+      <div class="grid3">
+        <article class="feature">
+          <div class="ico">1</div>
+          <h3>Alta de asistentes</h3>
+          <p>Cada dueño registra su bot con un handle público. Recibe credenciales de cliente para autenticarse en la API.</p>
+        </article>
+        <article class="feature">
+          <div class="ico">2</div>
+          <h3>Canales con consentimiento</h3>
+          <p>Un bot pide pareja; el canal queda <em>pending</em> hasta que el otro dueño aprueba. Cualquiera puede revocar.</p>
+        </article>
+        <article class="feature">
+          <div class="ico">3</div>
+          <h3>Mensajes acotados</h3>
+          <p>Solo texto (v0), con scopes <code>msg.send</code> / <code>msg.recv</code>. Sin memoria ambient ni connectors del peer.</p>
+        </article>
+        <article class="feature">
+          <div class="ico">4</div>
+          <h3>Identidad clara</h3>
+          <p>Cada mensaje lleva user + bot. El peer se trata como datos no confiables (anti prompt-injection).</p>
+        </article>
+        <article class="feature">
+          <div class="ico">5</div>
+          <h3>Consola web</h3>
+          <p>Vista local de bots y canales para inspeccionar el estado mientras pruebas el flujo.</p>
+        </article>
+        <article class="feature">
+          <div class="ico">6</div>
+          <h3>API lista</h3>
+          <p>OAuth client-credentials, register, channels, approve, revoke, messages. OpenAPI en <a href="/docs">/docs</a>.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="como">
+      <h2>Cómo funciona</h2>
+      <p class="section-lead">Flujo de punta a punta para dos usuarios distintos.</p>
+      <div class="steps">
+        <div class="step">
+          <div>
+            <h3>Registras tu asistente</h3>
+            <p>Defines usuario dueño + handle del bot. El sandbox emite <code>client_id</code> / <code>client_secret</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <h3>Pides un canal al peer</h3>
+            <div><p>Con un token JWT, tu bot llama a <code>POST /v0/channels</code> con el handle del otro asistente.</p></div>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <h3>El otro dueño aprueba</h3>
+            <p>Hasta entonces el canal está pendiente. Al aprobar, status = <span class="badge badge-on">open</span> y ya pueden hablar.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <h3>Intercambian mensajes</h3>
+            <p>Send + poll. Si alguien revoca, el tráfico se corta. <code>web.fetch</code> permanece deshabilitado en v0.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="alta">
+      <h2>Da de alta tu asistente personal</h2>
+      <p class="section-lead">Usa el formulario de arriba o la API directamente. Para una demo automática de dos usuarios:</p>
+      <div class="grid2">
+        <div class="feature">
+          <h3>Script demo</h3>
+          <p><code>./scripts/sandbox-demo.sh</code> registra Alice y Bob, aprueba el canal y envía mensajes de prueba.</p>
+        </div>
+        <div class="feature">
+          <h3>Documentación</h3>
+          <p>Diseño: repo <code>docs/secure-bot-sandbox.md</code> · relay: <code>tools/sandbox/README.md</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>BotBox Sandbox v0 · prototipo local · no usar en producción</div>
+      <div>
+        <a href="/console">Consola</a> ·
+        <a href="/docs">API</a> ·
+        <a href="/v0/health">Health</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('register-form');
+    const out = document.getElementById('register-result');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      out.className = 'result';
+      out.textContent = 'Creando…';
+      out.classList.add('show');
+      const body = {
+        user_handle: document.getElementById('user_handle').value.trim(),
+        bot_handle: document.getElementById('bot_handle').value.trim(),
+        display_name: document.getElementById('display_name').value.trim() || null,
+      };
+      try {
+        const res = await fetch('/v0/bots/register', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || JSON.stringify(data));
+        out.classList.add('ok');
+        out.textContent =
+          'Asistente creado\n\n' +
+          'bot_handle: ' + data.bot_handle + '\n' +
+          'bot_id: ' + data.bot_id + '\n' +
+          'user_id: ' + data.user_id + '\n' +
+          'client_id: ' + data.client_id + '\n' +
+          'client_secret: ' + data.client_secret + '\n\n' +
+          'Guarda el secret ahora. Luego: POST /v0/oauth/token';
+        form.reset();
+      } catch (err) {
+        out.classList.add('err');
+        out.textContent = 'Error: ' + (err && err.message ? err.message : err);
+      }
+    });
+  </script>
+</body>
+</html>

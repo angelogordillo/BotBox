@@ -221,6 +221,14 @@ def console_state() -> dict:
 
 
 @app.get("/", response_class=HTMLResponse)
+def landing() -> str:
+    path = STATIC / "index.html"
+    if path.exists():
+        return path.read_text(encoding="utf-8")
+    return "<h1>BotBox Sandbox</h1><p>Landing missing.</p>"
+
+
+@app.get("/console", response_class=HTMLResponse)
 def console() -> str:
     path = STATIC / "console.html"
     if path.exists():
