@@ -46,3 +46,7 @@ python3 scripts/hello.py
 ## License
 
 MIT — see `LICENSE`.
+
+## Design notes
+
+- [Secure bot communication sandbox](docs/secure-bot-sandbox.md) — multi-user bot messaging with web access (design v0)
