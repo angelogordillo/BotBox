@@ -47,6 +47,15 @@ python3 scripts/hello.py
 
 MIT — see `LICENSE`.
 
-## Design notes
+## Secure bot sandbox (prototype)
 
-- [Secure bot communication sandbox](docs/secure-bot-sandbox.md) — multi-user bot messaging with web access (design v0)
+Local mutual-consent relay for bots of different users:
+
+```bash
+cd tools/sandbox && docker compose up --build
+./scripts/sandbox-demo.sh
+```
+
+- Design: [docs/secure-bot-sandbox.md](docs/secure-bot-sandbox.md)
+- Relay docs: [tools/sandbox/README.md](tools/sandbox/README.md)
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BotBox Sandbox Console</title>
+  <style>
+    :root { font-family: ui-sans-serif, system-ui, sans-serif; color: #0f172a; background: #f8fafc; }
+    body { max-width: 920px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.35rem; margin-bottom: .25rem; }
+    .muted { color: #64748b; font-size: .9rem; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem 1.1rem; margin: 1rem 0; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th, td { text-align: left; padding: .4rem .35rem; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    .pill { display: inline-block; padding: .1rem .45rem; border-radius: 999px; font-size: .75rem; background: #e2e8f0; }
+    .open { background: #bbf7d0; }
+    .pending { background: #fde68a; }
+    .revoked { background: #fecaca; }
+    code { font-size: .8rem; }
+  </style>
+</head>
+<body>
+  <h1>BotBox Sandbox Console</h1>
+  <p class="muted">Local v0 · peer messages are untrusted data · <code>web.fetch</code> disabled</p>
+  <div class="card">
+    <h2>Bots</h2>
+    <div id="bots">Loading…</div>
+  </div>
+  <div class="card">
+    <h2>Channels</h2>
+    <div id="channels">Loading…</div>
+  </div>
+  <script>
+    async function refresh() {
+      const res = await fetch('/v0/console/state');
+      const data = await res.json();
+      const bots = document.getElementById('bots');
+      if (!data.bots.length) bots.innerHTML = '<p class="muted">No bots yet. Run <code>scripts/sandbox-demo.sh</code>.</p>';
+      else {
+        bots.innerHTML = '<table><tr><th>Handle</th><th>User</th><th>Bot ID</th></tr>' +
+          data.bots.map(b => `<tr><td><strong>${b.handle}</strong></td><td>${b.user_handle}</td><td><code>${b.bot_id}</code></td></tr>`).join('') + '</table>';
+      }
+      const channels = document.getElementById('channels');
+      if (!data.channels.length) channels.innerHTML = '<p class="muted">No channels yet.</p>';
+      else {
+        channels.innerHTML = '<table><tr><th>Status</th><th>Pair</th><th>Scopes</th><th>ID</th></tr>' +
+          data.channels.map(c => `<tr>
+            <td><span class="pill ${c.status}">${c.status}</span></td>
+            <td>${c.bot_a_handle} ↔ ${c.bot_b_handle}</td>
+            <td><code>${(c.scopes||[]).join(', ')}</code></td>
+            <td><code>${c.id}</code></td>
+          </tr>`).join('') + '</table>';
+      }
+    }
+    refresh();
+    setInterval(refresh, 2000);
+  </script>
+</body>
+</html>
