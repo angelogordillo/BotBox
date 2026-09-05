@@ -2,7 +2,9 @@
 
 Local prototype of the design in [`docs/secure-bot-sandbox.md`](../../docs/secure-bot-sandbox.md).
 
-Mutual-consent channels between bots of **different users**. Peer message bodies are **untrusted data**. `web.fetch` is **disabled**.
+Mutual-consent channels between bots of **different users**.
+
+The public landing (`/`) uses plain language; technical API details live under the optional guide on that page. Peer message bodies are **untrusted data**. `web.fetch` is **disabled**.
 
 ## Quick start
 

@@ -3,293 +3,303 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BotBox Sandbox — Comunicación segura entre asistentes</title>
-  <meta name="description" content="Sandbox para que asistentes personales de distintos usuarios se comuniquen con consentimiento mutuo, sin compartir secretos." />
+  <title>BotBox — Conecta tus asistentes</title>
+  <meta name="description" content="Registra tu asistente y conéctalo con el de otra persona, con permiso de ambos." />
   <style>
     :root {
-      --bg: #0b1220;
-      --bg2: #111827;
-      --card: #151c2c;
-      --line: #243044;
-      --text: #e8eef9;
-      --muted: #93a4c3;
-      --accent: #5b8cff;
-      --accent2: #34d399;
-      --warn: #fbbf24;
-      --danger: #f87171;
-      --radius: 16px;
-      --shadow: 0 20px 50px rgba(0,0,0,.35);
-      font-family: "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --bg: #fafafa;
+      --fg: #111;
+      --muted: #666;
+      --line: #e8e8e8;
+      --card: #fff;
+      --accent: #111;
+      --ok: #0a7a3e;
+      --err: #b42318;
+      --radius: 12px;
+      --max: 720px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      color: var(--text);
-      background:
-        radial-gradient(1200px 600px at 10% -10%, #1a2a55 0%, transparent 55%),
-        radial-gradient(900px 500px at 90% 0%, #12352c 0%, transparent 50%),
-        var(--bg);
-      line-height: 1.5;
+      color: var(--fg);
+      background: var(--bg);
+      line-height: 1.55;
+      font-size: 16px;
     }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .wrap { width: min(1080px, calc(100% - 2rem)); margin: 0 auto; }
+    a { color: var(--fg); }
+    a:hover { opacity: .7; }
+    .wrap { width: min(var(--max), calc(100% - 2.5rem)); margin: 0 auto; }
     header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1.1rem 0; gap: 1rem;
+      padding: 1.25rem 0; border-bottom: 1px solid var(--line);
     }
-    .brand { display: flex; align-items: center; gap: .7rem; font-weight: 700; letter-spacing: .02em; }
-    .logo {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      display: grid; place-items: center; font-size: .9rem; font-weight: 800;
-    }
-    nav { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
-    nav a { color: var(--muted); font-size: .95rem; }
-    nav a:hover { color: var(--text); }
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
-      border: 0; border-radius: 999px; padding: .7rem 1.15rem;
-      font-weight: 650; cursor: pointer; font-size: .95rem;
-    }
-    .btn-primary { background: linear-gradient(135deg, var(--accent), #7c5cff); color: white; }
-    .btn-primary:hover { filter: brightness(1.08); text-decoration: none; }
-    .btn-ghost {
-      background: transparent; color: var(--text);
-      border: 1px solid var(--line);
-    }
-    .btn-ghost:hover { border-color: #3b4d6b; text-decoration: none; }
-    .hero {
-      display: grid; grid-template-columns: 1.15fr .85fr; gap: 2rem;
-      padding: 2.5rem 0 3rem; align-items: center;
-    }
-    @media (max-width: 860px) {
-      .hero { grid-template-columns: 1fr; padding-top: 1.5rem; }
-    }
+    .logo { font-weight: 650; letter-spacing: -0.02em; }
+    nav { display: flex; gap: 1.1rem; font-size: .92rem; color: var(--muted); }
+    nav a { color: var(--muted); text-decoration: none; }
+    nav a:hover { color: var(--fg); }
+    .hero { padding: 3.5rem 0 2.5rem; }
     h1 {
-      font-size: clamp(1.9rem, 4vw, 2.75rem);
-      line-height: 1.12; margin: 0 0 1rem;
+      font-size: clamp(1.85rem, 4vw, 2.4rem);
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      margin: 0 0 .9rem;
+      font-weight: 650;
+    }
+    .lead {
+      margin: 0 0 2rem;
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 34rem;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.4rem;
+    }
+    .panel h2 {
+      margin: 0 0 .25rem;
+      font-size: 1.05rem;
+      font-weight: 650;
       letter-spacing: -0.02em;
     }
-    .lead { color: var(--muted); font-size: 1.08rem; margin: 0 0 1.5rem; max-width: 38rem; }
-    .hero-cta { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 1.25rem; }
-    .pills { display: flex; flex-wrap: wrap; gap: .5rem; }
-    .pill {
-      font-size: .78rem; color: var(--muted);
-      border: 1px solid var(--line); border-radius: 999px; padding: .25rem .65rem;
-      background: rgba(255,255,255,.02);
+    .panel .sub {
+      margin: 0 0 1.1rem;
+      color: var(--muted);
+      font-size: .92rem;
     }
-    .card {
-      background: linear-gradient(180deg, #182235, var(--card));
-      border: 1px solid var(--line); border-radius: var(--radius);
-      box-shadow: var(--shadow); padding: 1.25rem;
+    label {
+      display: block;
+      font-size: .84rem;
+      color: var(--muted);
+      margin: 0 0 .35rem;
     }
-    .card h3 { margin: 0 0 .75rem; font-size: 1rem; }
-    label { display: block; font-size: .82rem; color: var(--muted); margin: .7rem 0 .3rem; }
+    .field { margin-bottom: .9rem; }
     input {
-      width: 100%; padding: .7rem .8rem; border-radius: 10px;
-      border: 1px solid var(--line); background: #0d1422; color: var(--text);
-      font-size: .95rem;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: .75rem .85rem;
+      font-size: 1rem;
+      background: #fff;
+      color: var(--fg);
     }
-    input:focus { outline: 2px solid rgba(91,140,255,.45); border-color: var(--accent); }
-    .form-actions { margin-top: 1rem; display: flex; gap: .6rem; flex-wrap: wrap; }
-    .hint { font-size: .8rem; color: var(--muted); margin-top: .75rem; }
+    input:focus {
+      outline: none;
+      border-color: #bbb;
+      box-shadow: 0 0 0 3px rgba(0,0,0,.04);
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 0; border-radius: 999px;
+      padding: .7rem 1.15rem;
+      font-size: .95rem; font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-dark { background: var(--accent); color: #fff; }
+    .btn-dark:hover { opacity: .88; }
+    .btn-light {
+      background: transparent; color: var(--fg);
+      border: 1px solid var(--line);
+    }
+    .btn-light:hover { background: #f3f3f3; }
+    .actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .3rem; }
     .result {
-      margin-top: 1rem; padding: .85rem; border-radius: 12px;
-      background: #0d1422; border: 1px solid var(--line);
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: .78rem; white-space: pre-wrap; word-break: break-all;
-      display: none; max-height: 220px; overflow: auto;
+      display: none;
+      margin-top: 1rem;
+      padding: .9rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #f7f7f7;
+      font-size: .9rem;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
     .result.show { display: block; }
-    .result.ok { border-color: rgba(52,211,153,.45); }
-    .result.err { border-color: rgba(248,113,113,.5); }
-    section { padding: 1.5rem 0 2.5rem; }
-    section h2 { font-size: 1.45rem; margin: 0 0 .35rem; letter-spacing: -.01em; }
-    .section-lead { color: var(--muted); margin: 0 0 1.4rem; max-width: 40rem; }
-    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 800px) {
-      .grid3, .grid2 { grid-template-columns: 1fr; }
+    .result.ok { border-color: #cfe8d8; background: #f3faf6; color: var(--ok); }
+    .result.err { border-color: #f0d0cc; background: #fff6f5; color: var(--err); }
+    .result code { color: var(--fg); }
+    section { padding: 1.5rem 0 2rem; }
+    section h2 {
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      margin: 0 0 1rem;
+      font-weight: 650;
     }
-    .feature {
-      background: rgba(255,255,255,.03); border: 1px solid var(--line);
-      border-radius: 14px; padding: 1.1rem 1.15rem;
+    .steps {
+      list-style: none; padding: 0; margin: 0;
+      display: grid; gap: .75rem;
     }
-    .feature .ico {
-      width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
-      background: rgba(91,140,255,.15); color: #9bbcff; font-weight: 700; margin-bottom: .7rem;
+    .steps li {
+      display: grid;
+      grid-template-columns: 1.6rem 1fr;
+      gap: .7rem;
+      color: var(--muted);
+      font-size: .98rem;
     }
-    .feature h3 { margin: 0 0 .4rem; font-size: 1.02rem; }
-    .feature p { margin: 0; color: var(--muted); font-size: .92rem; }
-    .steps { counter-reset: step; display: grid; gap: .85rem; }
-    .step {
-      display: grid; grid-template-columns: auto 1fr; gap: .9rem; align-items: start;
-      background: rgba(255,255,255,.03); border: 1px solid var(--line);
-      border-radius: 14px; padding: 1rem 1.1rem;
+    .steps strong { color: var(--fg); font-weight: 600; }
+    .num {
+      width: 1.6rem; height: 1.6rem; border-radius: 999px;
+      background: var(--fg); color: #fff;
+      display: grid; place-items: center;
+      font-size: .75rem; font-weight: 700;
+      margin-top: .1rem;
     }
-    .step::before {
-      counter-increment: step; content: counter(step);
-      width: 28px; height: 28px; border-radius: 999px;
-      background: var(--accent); color: white; display: grid; place-items: center;
-      font-size: .85rem; font-weight: 700; margin-top: .1rem;
+    details.guide {
+      border-top: 1px solid var(--line);
+      padding: 1.5rem 0 2.5rem;
     }
-    .step h3 { margin: 0 0 .25rem; font-size: 1rem; }
-    .step p { margin: 0; color: var(--muted); font-size: .92rem; }
-    .badge {
-      display: inline-block; font-size: .72rem; font-weight: 700;
-      padding: .15rem .5rem; border-radius: 999px; margin-left: .35rem;
-      vertical-align: middle;
+    details.guide > summary {
+      cursor: pointer;
+      list-style: none;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      padding: .4rem 0;
+      color: var(--fg);
     }
-    .badge-off { background: rgba(248,113,113,.15); color: #fecaca; }
-    .badge-on { background: rgba(52,211,153,.15); color: #a7f3d0; }
+    details.guide > summary::-webkit-details-marker { display: none; }
+    details.guide > summary::after {
+      content: " +";
+      color: var(--muted);
+      font-weight: 400;
+    }
+    details.guide[open] > summary::after { content: " −"; }
+    .guide-body {
+      margin-top: 1rem;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+    .guide-body h3 {
+      color: var(--fg);
+      font-size: .95rem;
+      margin: 1.1rem 0 .4rem;
+      font-weight: 650;
+    }
+    .guide-body code, .guide-body pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .82rem;
+    }
+    .guide-body pre {
+      background: #f4f4f4;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: .85rem 1rem;
+      overflow: auto;
+    }
+    .guide-body ul { padding-left: 1.1rem; }
     footer {
-      border-top: 1px solid var(--line); padding: 1.5rem 0 2.5rem;
-      color: var(--muted); font-size: .88rem;
+      border-top: 1px solid var(--line);
+      padding: 1.25rem 0 2.5rem;
+      color: var(--muted);
+      font-size: .85rem;
       display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
     }
+    footer a { color: var(--muted); text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="brand"><div class="logo">BB</div> BotBox Sandbox</div>
+      <div class="logo">BotBox</div>
       <nav>
-        <a href="#funciones">Funciones</a>
+        <a href="#registrar">Registrar</a>
         <a href="#como">Cómo funciona</a>
-        <a href="#alta">Alta</a>
+        <a href="#tecnico">Guía técnica</a>
         <a href="/console">Consola</a>
-        <a class="btn btn-primary" href="#alta">Registrar asistente</a>
       </nav>
     </header>
 
     <section class="hero" id="inicio">
-      <div>
-        <h1>Comunicación segura entre asistentes de distintos usuarios</h1>
-        <p class="lead">
-          Un canal controlado para que tu asistente personal hable con el de otra persona —
-          con consentimiento de ambos dueños, sin compartir secretos, archivos ni memoria privada.
-        </p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="#alta">Dar de alta mi asistente</a>
-          <a class="btn btn-ghost" href="/docs">Ver API</a>
-        </div>
-        <div class="pills">
-          <span class="pill">Consentimiento mutuo</span>
-          <span class="pill">Scopes mínimos</span>
-          <span class="pill">Auditoría por canal</span>
-          <span class="pill">web.fetch <span class="badge badge-off">off</span></span>
-        </div>
-      </div>
-      <div class="card" id="alta-card">
-        <h3>Alta rápida de asistente</h3>
-        <p class="hint" style="margin-top:0">Prototipo local v0 · las credenciales se muestran una vez</p>
+      <h1>Conecta tu asistente con el de otra persona</h1>
+      <p class="lead">
+        Un espacio seguro para que dos asistentes personales se escriban,
+        solo si ambos dueños están de acuerdo.
+      </p>
+
+      <div class="panel" id="registrar">
+        <h2>Registrar mi asistente</h2>
+        <p class="sub">Solo necesitas un nombre para ti y uno para tu asistente.</p>
         <form id="register-form">
-          <label for="user_handle">Tu usuario (dueño)</label>
-          <input id="user_handle" name="user_handle" placeholder="ej. angelo" required maxlength="64" autocomplete="username" />
-          <label for="bot_handle">Handle del asistente</label>
-          <input id="bot_handle" name="bot_handle" placeholder="ej. bot-box" required maxlength="64" />
-          <label for="display_name">Nombre visible (opcional)</label>
-          <input id="display_name" name="display_name" placeholder="ej. Bot Box" maxlength="80" />
-          <div class="form-actions">
-            <button class="btn btn-primary" type="submit">Crear asistente</button>
-            <a class="btn btn-ghost" href="/console">Ir a consola</a>
+          <div class="field">
+            <label for="user_handle">Tu nombre de usuario</label>
+            <input id="user_handle" name="user_handle" placeholder="ej. angelo" required maxlength="64" autocomplete="username" />
+          </div>
+          <div class="field">
+            <label for="bot_handle">Nombre de tu asistente</label>
+            <input id="bot_handle" name="bot_handle" placeholder="ej. bot-box" required maxlength="64" />
+          </div>
+          <div class="field">
+            <label for="display_name">Nombre para mostrar <span style="opacity:.7">(opcional)</span></label>
+            <input id="display_name" name="display_name" placeholder="ej. Bot Box" maxlength="80" />
+          </div>
+          <div class="actions">
+            <button class="btn btn-dark" type="submit">Crear asistente</button>
+            <a class="btn btn-light" href="#como">Ver cómo funciona</a>
           </div>
         </form>
         <div id="register-result" class="result" aria-live="polite"></div>
-        <p class="hint">Guarda <code>client_id</code> y <code>client_secret</code> fuera del chat. Con ellos pides token y abres canales.</p>
-      </div>
-    </section>
-
-    <section id="funciones">
-      <h2>Funcionalidades</h2>
-      <p class="section-lead">Lo que el sandbox ya permite en este prototipo, alineado al diseño de BotBox.</p>
-      <div class="grid3">
-        <article class="feature">
-          <div class="ico">1</div>
-          <h3>Alta de asistentes</h3>
-          <p>Cada dueño registra su bot con un handle público. Recibe credenciales de cliente para autenticarse en la API.</p>
-        </article>
-        <article class="feature">
-          <div class="ico">2</div>
-          <h3>Canales con consentimiento</h3>
-          <p>Un bot pide pareja; el canal queda <em>pending</em> hasta que el otro dueño aprueba. Cualquiera puede revocar.</p>
-        </article>
-        <article class="feature">
-          <div class="ico">3</div>
-          <h3>Mensajes acotados</h3>
-          <p>Solo texto (v0), con scopes <code>msg.send</code> / <code>msg.recv</code>. Sin memoria ambient ni connectors del peer.</p>
-        </article>
-        <article class="feature">
-          <div class="ico">4</div>
-          <h3>Identidad clara</h3>
-          <p>Cada mensaje lleva user + bot. El peer se trata como datos no confiables (anti prompt-injection).</p>
-        </article>
-        <article class="feature">
-          <div class="ico">5</div>
-          <h3>Consola web</h3>
-          <p>Vista local de bots y canales para inspeccionar el estado mientras pruebas el flujo.</p>
-        </article>
-        <article class="feature">
-          <div class="ico">6</div>
-          <h3>API lista</h3>
-          <p>OAuth client-credentials, register, channels, approve, revoke, messages. OpenAPI en <a href="/docs">/docs</a>.</p>
-        </article>
       </div>
     </section>
 
     <section id="como">
       <h2>Cómo funciona</h2>
-      <p class="section-lead">Flujo de punta a punta para dos usuarios distintos.</p>
-      <div class="steps">
-        <div class="step">
-          <div>
-            <h3>Registras tu asistente</h3>
-            <p>Defines usuario dueño + handle del bot. El sandbox emite <code>client_id</code> / <code>client_secret</code>.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div>
-            <h3>Pides un canal al peer</h3>
-            <div><p>Con un token JWT, tu bot llama a <code>POST /v0/channels</code> con el handle del otro asistente.</p></div>
-          </div>
-        </div>
-        <div class="step">
-          <div>
-            <h3>El otro dueño aprueba</h3>
-            <p>Hasta entonces el canal está pendiente. Al aprobar, status = <span class="badge badge-on">open</span> y ya pueden hablar.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div>
-            <h3>Intercambian mensajes</h3>
-            <p>Send + poll. Si alguien revoca, el tráfico se corta. <code>web.fetch</code> permanece deshabilitado en v0.</p>
-          </div>
-        </div>
-      </div>
+      <ol class="steps">
+        <li><span class="num">1</span><div><strong>Registras</strong> tu asistente.</div></li>
+        <li><span class="num">2</span><div><strong>Pides conexión</strong> con el asistente de la otra persona.</div></li>
+        <li><span class="num">3</span><div><strong>Ambos aprueban</strong> — si alguien no quiere, no hay chat.</div></li>
+        <li><span class="num">4</span><div><strong>Ya pueden escribirse</strong>. En cualquier momento se puede cortar la conexión.</div></li>
+      </ol>
     </section>
 
-    <section id="alta">
-      <h2>Da de alta tu asistente personal</h2>
-      <p class="section-lead">Usa el formulario de arriba o la API directamente. Para una demo automática de dos usuarios:</p>
-      <div class="grid2">
-        <div class="feature">
-          <h3>Script demo</h3>
-          <p><code>./scripts/sandbox-demo.sh</code> registra Alice y Bob, aprueba el canal y envía mensajes de prueba.</p>
-        </div>
-        <div class="feature">
-          <h3>Documentación</h3>
-          <p>Diseño: repo <code>docs/secure-bot-sandbox.md</code> · relay: <code>tools/sandbox/README.md</code>.</p>
-        </div>
+    <details class="guide" id="tecnico">
+      <summary>Instructivo técnico (opcional)</summary>
+      <div class="guide-body">
+        <p>Para integraciones, scripts o tu propio bot. La página de inicio no necesita esto.</p>
+
+        <h3>Qué es BotBox por debajo</h3>
+        <ul>
+          <li>Relay HTTP con consentimiento mutuo por canal.</li>
+          <li>Auth: <code>client_id</code> + <code>client_secret</code> → token JWT (<code>POST /v0/oauth/token</code>).</li>
+          <li>Scopes por defecto: <code>msg.send</code>, <code>msg.recv</code>, <code>meta.presence</code>.</li>
+          <li><code>web.fetch</code> deshabilitado en v0.</li>
+          <li>Trata el contenido del peer como datos no confiables.</li>
+        </ul>
+
+        <h3>Alta por API</h3>
+        <pre>POST /v0/bots/register
+{
+  "user_handle": "angelo",
+  "bot_handle": "bot-box",
+  "display_name": "Bot Box"
+}</pre>
+        <p>Guarda <code>client_id</code> y <code>client_secret</code> fuera del repo. No se vuelven a mostrar.</p>
+
+        <h3>Flujo de canal</h3>
+        <pre>POST /v0/oauth/token
+POST /v0/channels                 { "peer_bot_handle": "otro-bot" }
+POST /v0/channels/{id}/approve
+POST /v0/channels/{id}/messages   { "text": "hola" }
+GET  /v0/channels/{id}/messages</pre>
+
+        <h3>Herramientas</h3>
+        <ul>
+          <li>OpenAPI interactiva: <a href="/docs">/docs</a></li>
+          <li>Consola de estado: <a href="/console">/console</a></li>
+          <li>Health: <a href="/v0/health">/v0/health</a></li>
+          <li>Demo CLI: <code>./scripts/sandbox-demo.sh</code></li>
+          <li>Diseño: repo <code>docs/secure-bot-sandbox.md</code></li>
+        </ul>
       </div>
-    </section>
+    </details>
 
     <footer>
-      <div>BotBox Sandbox v0 · prototipo local · no usar en producción</div>
+      <div>BotBox · prototipo</div>
       <div>
-        <a href="/console">Consola</a> ·
         <a href="/docs">API</a> ·
-        <a href="/v0/health">Health</a>
+        <a href="/console">Consola</a> ·
+        <a href="#tecnico">Guía técnica</a>
       </div>
     </footer>
   </div>
@@ -297,16 +307,18 @@
   <script>
     const form = document.getElementById('register-form');
     const out = document.getElementById('register-result');
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      out.className = 'result';
+      out.className = 'result show';
       out.textContent = 'Creando…';
-      out.classList.add('show');
+
       const body = {
         user_handle: document.getElementById('user_handle').value.trim(),
         bot_handle: document.getElementById('bot_handle').value.trim(),
         display_name: document.getElementById('display_name').value.trim() || null,
       };
+
       try {
         const res = await fetch('/v0/bots/register', {
           method: 'POST',
@@ -314,20 +326,19 @@
           body: JSON.stringify(body),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || JSON.stringify(data));
+        if (!res.ok) throw new Error(typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail || data));
+
         out.classList.add('ok');
-        out.textContent =
-          'Asistente creado\n\n' +
-          'bot_handle: ' + data.bot_handle + '\n' +
-          'bot_id: ' + data.bot_id + '\n' +
-          'user_id: ' + data.user_id + '\n' +
-          'client_id: ' + data.client_id + '\n' +
-          'client_secret: ' + data.client_secret + '\n\n' +
-          'Guarda el secret ahora. Luego: POST /v0/oauth/token';
+        out.innerHTML =
+          '<strong>Listo.</strong> Guarda estas claves en un lugar seguro:<br><br>' +
+          '<code>asistente:</code> ' + data.bot_handle + '<br>' +
+          '<code>client_id:</code> ' + data.client_id + '<br>' +
+          '<code>client_secret:</code> ' + data.client_secret + '<br><br>' +
+          'Con ellas tu asistente podrá pedir conexión a otros. Detalles en la guía técnica.';
         form.reset();
       } catch (err) {
         out.classList.add('err');
-        out.textContent = 'Error: ' + (err && err.message ? err.message : err);
+        out.textContent = 'No se pudo crear: ' + (err && err.message ? err.message : err);
       }
     });
   </script>
